@@ -12,7 +12,7 @@ $expiring_soon = isset($_GET['expiring_soon']);
 $query = "SELECT fp.*, u.name as donor_name 
           FROM food_posts fp 
           JOIN users u ON fp.donor_id = u.id 
-          WHERE fp.status = 'available' AND fp.expiry_time > NOW()";
+          WHERE fp.status = 'available' AND fp.expiry_time > NOW() AND fp.is_deleted = 0";
 
 $params = [];
 if ($search) {
@@ -32,7 +32,19 @@ if ($expiring_soon) {
     $query .= " AND fp.expiry_time < DATE_ADD(NOW(), INTERVAL 4 HOUR)";
 }
 
-$query .= " ORDER BY fp.created_at DESC";
+// Location-based prioritization: exact matches first, then partial matches, then the rest
+if ($location) {
+    $query .= " ORDER BY 
+        CASE 
+            WHEN fp.location = ? THEN 0
+            WHEN fp.location LIKE ? THEN 1
+            ELSE 2 
+        END, fp.created_at DESC";
+    $params[] = $location;
+    $params[] = "%$location%";
+} else {
+    $query .= " ORDER BY fp.created_at DESC";
+}
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $listings = $stmt->fetchAll();
@@ -146,7 +158,7 @@ $collectedStmt = $pdo->query("SELECT fp.*, u.name as donor_name, ru.name as rece
     JOIN users u ON fp.donor_id = u.id 
     LEFT JOIN claims c ON fp.id = c.food_id AND c.status = 'collected'
     LEFT JOIN users ru ON c.receiver_id = ru.id
-    WHERE fp.status = 'collected' 
+    WHERE fp.status = 'collected' AND fp.is_deleted = 0
     ORDER BY fp.created_at DESC LIMIT 6");
 $collected = $collectedStmt->fetchAll();
 

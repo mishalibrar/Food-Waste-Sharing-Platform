@@ -20,7 +20,7 @@ $stmt = $pdo->prepare("SELECT c.*, fp.title, fp.image_path, fp.location, fp.quan
                       FROM claims c 
                       JOIN food_posts fp ON c.food_id = fp.id 
                       JOIN users u ON fp.donor_id = u.id 
-                      WHERE c.receiver_id = ? AND c.status != 'cancelled'
+                      WHERE c.receiver_id = ? AND c.status != 'cancelled' AND fp.is_deleted = 0
                       ORDER BY c.claimed_at DESC");
 $stmt->execute([$user_id]);
 $claims = $stmt->fetchAll();

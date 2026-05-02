@@ -8,7 +8,7 @@ $id = $_GET['id'] ?? null;
 if (!$id) redirect('../index.php');
 
 // Get food item with donor info
-$stmt = $pdo->prepare("SELECT fp.*, u.name as donor_name, u.phone as donor_phone, u.id as donor_user_id, u.created_at as donor_joined 
+$stmt = $pdo->prepare("SELECT fp.*, u.name as donor_name, u.phone as donor_phone, u.id as donor_user_id, u.created_at as donor_joined, u.rating_avg as donor_rating_avg
                       FROM food_posts fp 
                       JOIN users u ON fp.donor_id = u.id 
                       WHERE fp.id = ?");
@@ -198,16 +198,26 @@ elseif ($donorCollectedCount >= 3) $trustBadge = '🥉 Bronze Donor';
                             <span style="font-size: 0.75rem; background: rgba(245, 158, 11, 0.15); color: var(--secondary); padding: 0.2rem 0.6rem; border-radius: 12px;"><?php echo $trustBadge; ?></span>
                         <?php endif; ?>
                     </div>
+                    <!-- Star Rating Display -->
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+                        <?php
+                        $cachedAvg = floatval($item['donor_rating_avg'] ?? 0);
+                        $displayAvg = $cachedAvg > 0 ? $cachedAvg : $avgScore;
+                        for ($s = 1; $s <= 5; $s++):
+                            if ($s <= floor($displayAvg)):
+                        ?>
+                            <i class="fas fa-star" style="color: var(--secondary); font-size: 0.95rem;"></i>
+                        <?php elseif ($s - $displayAvg < 1 && $s - $displayAvg > 0): ?>
+                            <i class="fas fa-star-half-alt" style="color: var(--secondary); font-size: 0.95rem;"></i>
+                        <?php else: ?>
+                            <i class="far fa-star" style="color: var(--text-muted); font-size: 0.95rem;"></i>
+                        <?php endif; endfor; ?>
+                        <span style="font-weight: 700; color: var(--secondary); font-size: 0.95rem;"><?php echo $displayAvg > 0 ? number_format($displayAvg, 1) : 'N/A'; ?></span>
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">(<?php echo $totalReviews; ?> review<?php echo $totalReviews != 1 ? 's' : ''; ?>)</span>
+                    </div>
                     <div style="display: flex; gap: 1.5rem; color: var(--text-muted); font-size: 0.85rem;">
                         <span><i class="fas fa-box"></i> <?php echo $donorTotalPosts; ?> posts</span>
                         <span><i class="fas fa-check-circle"></i> <?php echo $donorCollectedCount; ?> donated</span>
-                        <span>
-                            <?php if ($totalReviews > 0): ?>
-                                <i class="fas fa-star" style="color: var(--secondary);"></i> <?php echo $avgScore; ?>/5 (<?php echo $totalReviews; ?>)
-                            <?php else: ?>
-                                <i class="far fa-star"></i> No reviews yet
-                            <?php endif; ?>
-                        </span>
                     </div>
                     <span style="font-size: 0.75rem; color: var(--text-muted);">Joined <?php echo date('M Y', strtotime($item['donor_joined'])); ?></span>
                 </div>

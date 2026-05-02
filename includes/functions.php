@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+// Define Base URL for links and assets
+$is_localhost = ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1');
+define('BASE_URL', $is_localhost ? '/Foodwastesharingplatform' : '');
+
 function isLoggedIn() {
     return isset($_SESSION['user_id']);
 }
@@ -56,7 +60,7 @@ function getFoodTypeLabel($type) {
 }
 
 function updateExpiredListings($pdo) {
-    $stmt = $pdo->prepare("UPDATE food_posts SET status = 'expired' WHERE expiry_time < NOW() AND status = 'available'");
+    $stmt = $pdo->prepare("UPDATE food_posts SET status = 'expired' WHERE expiry_time < NOW() AND status = 'available' AND is_deleted = 0");
     $stmt->execute();
 }
 ?>

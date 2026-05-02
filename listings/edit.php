@@ -25,6 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $location = $_POST['location'];
     
     $image_path = $post['image_path'];
+    
+    // Check if a new image URL was provided
+    if (!empty($_POST['image_url'])) {
+        $image_path = $_POST['image_url'];
+    }
+
+    // File upload takes priority if provided
     if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
         $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
         $filename = uniqid() . '.' . $ext;
@@ -98,9 +105,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="form-group" style="grid-column: span 2;">
                     <label class="form-label">Update Food Image (Optional)</label>
-                    <div style="display: flex; gap: 1rem; align-items: center;">
-                        <img src="../<?php echo htmlspecialchars($post['image_path']); ?>" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover;">
-                        <input type="file" name="image" class="form-control" accept="image/*">
+                    <div style="display: flex; gap: 1.5rem; align-items: start; margin-bottom: 1rem;">
+                        <img src="../<?php echo htmlspecialchars($post['image_path']); ?>" style="width: 100px; height: 100px; border-radius: 12px; object-fit: cover; border: 1px solid var(--glass-border);">
+                        <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">Upload New File</span>
+                                <input type="file" name="image" class="form-control" accept="image/*">
+                            </div>
+                            <div>
+                                <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">Or Paste New Image URL</span>
+                                <input type="url" name="image_url" class="form-control" placeholder="https://example.com/image.jpg">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

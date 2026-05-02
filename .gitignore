@@ -1,0 +1,13 @@
+# Database configuration
+includes/db.php
+
+# Operating System files
+Thumbs.db
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+
+# Local SQL files
+*.sql

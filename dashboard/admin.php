@@ -5,12 +5,12 @@ require_once '../includes/functions.php';
 checkRole('admin');
 
 $total_users   = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
-$total_posts   = $pdo->query("SELECT COUNT(*) FROM food_posts")->fetchColumn();
-$active_posts  = $pdo->query("SELECT COUNT(*) FROM food_posts WHERE status = 'available'")->fetchColumn();
+$total_posts   = $pdo->query("SELECT COUNT(*) FROM food_posts WHERE is_deleted = 0")->fetchColumn();
+$active_posts  = $pdo->query("SELECT COUNT(*) FROM food_posts WHERE status = 'available' AND is_deleted = 0")->fetchColumn();
 $total_claims  = $pdo->query("SELECT COUNT(*) FROM claims WHERE status = 'collected'")->fetchColumn();
 
 $users = $pdo->query("SELECT * FROM users ORDER BY created_at DESC LIMIT 100")->fetchAll();
-$posts = $pdo->query("SELECT fp.*, u.name as donor_name FROM food_posts fp JOIN users u ON fp.donor_id = u.id ORDER BY fp.created_at DESC LIMIT 100")->fetchAll();
+$posts = $pdo->query("SELECT fp.*, u.name as donor_name FROM food_posts fp JOIN users u ON fp.donor_id = u.id WHERE fp.is_deleted = 0 ORDER BY fp.created_at DESC LIMIT 100")->fetchAll();
 
 $platform_reviews_count = $pdo->query("SELECT COUNT(*) FROM platform_reviews")->fetchColumn();
 $avg_rating = $pdo->query("SELECT ROUND(AVG(rating),1) FROM platform_reviews")->fetchColumn();

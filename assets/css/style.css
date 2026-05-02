@@ -176,7 +176,7 @@ nav {
     padding: 10rem 5% 8rem;
     text-align: center;
     position: relative;
-    background: url('/Foodwastesharingplatform/food_sharing_hero_bg_1777729780025.png') center/cover no-repeat;
+    background: url('../../food_sharing_hero_bg_1777729780025.png') center/cover no-repeat;
     margin-bottom: 4rem;
     display: flex;
     flex-direction: column;
@@ -821,3 +821,23 @@ th {
 /* Expiry chip */
 .expiry-chip { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.55rem; border-radius: 8px; background: rgba(245,158,11,0.1); color: var(--secondary); }
 .expiry-chip.urgent { background: rgba(239,68,68,0.1); color: #ef4444; animation: pulse 2s infinite; }
+
+/* Critical urgency badge - shown when < 30 minutes remaining */
+.critical-badge {
+    background: linear-gradient(135deg, #dc2626, #991b1b);
+    color: white;
+    padding: 0.25rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    animation: criticalPulse 1s infinite;
+    box-shadow: 0 0 12px rgba(220, 38, 38, 0.5);
+    letter-spacing: 0.5px;
+}
+
+@keyframes criticalPulse {
+    0% { opacity: 1; transform: scale(1); box-shadow: 0 0 12px rgba(220, 38, 38, 0.5); }
+    50% { opacity: 0.85; transform: scale(1.08); box-shadow: 0 0 20px rgba(220, 38, 38, 0.7); }
+    100% { opacity: 1; transform: scale(1); box-shadow: 0 0 12px rgba(220, 38, 38, 0.5); }
+}

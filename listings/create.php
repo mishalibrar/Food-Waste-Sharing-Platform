@@ -13,8 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $expiry_time = $_POST['expiry_time'];
     $location = $_POST['location'];
     
-    // Image upload
+    // Image handling
     $image_path = 'assets/images/default-food.jpg';
+    
+    // Check if an image URL was provided
+    if (!empty($_POST['image_url'])) {
+        $image_path = $_POST['image_url'];
+    }
+
+    // File upload takes priority if provided
     if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
         $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
         $filename = uniqid() . '.' . $ext;
@@ -86,9 +93,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" name="location" class="form-control" placeholder="e.g., Downtown, Sector 5" required>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="grid-column: span 2;">
                     <label class="form-label">Food Image</label>
-                    <input type="file" name="image" class="form-control" accept="image/*">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">Upload File</span>
+                            <input type="file" name="image" class="form-control" accept="image/*">
+                        </div>
+                        <div>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">Or Paste Image URL</span>
+                            <input type="url" name="image_url" class="form-control" placeholder="https://example.com/image.jpg">
+                        </div>
+                    </div>
                 </div>
             </div>
 
