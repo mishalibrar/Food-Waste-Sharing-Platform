@@ -15,15 +15,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $role = getRole();
 
     try {
+        // Soft delete: mark as is_deleted = 1 instead of permanently removing
         if ($role === 'admin') {
-            $stmt = $pdo->prepare("DELETE FROM food_posts WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE food_posts SET is_deleted = 1 WHERE id = ?");
             $stmt->execute([$id]);
         } else {
-            $stmt = $pdo->prepare("DELETE FROM food_posts WHERE id = ? AND donor_id = ?");
+            $stmt = $pdo->prepare("UPDATE food_posts SET is_deleted = 1 WHERE id = ? AND donor_id = ?");
             $stmt->execute([$id, $user_id]);
         }
 
         if ($stmt->rowCount() > 0) {
+            // Log the soft-delete action
+            $log = $pdo->prepare("INSERT INTO activity_log (food_id, user_id, action, details) VALUES (?, ?, 'cancelled', 'Post soft-deleted')");
+            $log->execute([$id, $user_id]);
+
             echo json_encode(['success' => true]);
         } else {
             throw new Exception('Could not delete listing.');

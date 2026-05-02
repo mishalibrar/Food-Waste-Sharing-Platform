@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     phone VARCHAR(20) DEFAULT NULL,
     password VARCHAR(255) NOT NULL,
     role ENUM('donor', 'receiver', 'admin') NOT NULL DEFAULT 'receiver',
+    rating_avg DECIMAL(3,2) DEFAULT 0.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -22,6 +23,7 @@ CREATE TABLE IF NOT EXISTS food_posts (
     location VARCHAR(255),
     image_path VARCHAR(255),
     status ENUM('available', 'reserved', 'collected', 'expired') DEFAULT 'available',
+    is_deleted BOOLEAN DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (donor_id) REFERENCES users(id) ON DELETE CASCADE
 );

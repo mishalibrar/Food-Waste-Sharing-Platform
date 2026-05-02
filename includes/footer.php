@@ -3,7 +3,7 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 4rem; margin-bottom: 4rem;">
                 <!-- Brand Section -->
                 <div>
-                    <a href="/Foodwastesharingplatform/index.php" class="logo" style="font-size: 1.5rem; display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <a href="<?php echo BASE_URL; ?>/index.php" class="logo" style="font-size: 1.5rem; display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
                         <i class="fas fa-leaf" style="color: var(--primary);"></i> FoodShare
                     </a>
                     <p style="color: var(--text-muted); line-height: 1.8; font-size: 0.95rem;">
@@ -16,11 +16,11 @@
                 <div>
                     <h4 style="color: var(--text-main); margin-bottom: 1.5rem; font-size: 1.1rem;">Quick Links</h4>
                     <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem;">
-                        <li><a href="/Foodwastesharingplatform/index.php" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: var(--transition);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">Browse Food</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>/index.php" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: var(--transition);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">Browse Food</a></li>
                         <?php if (isLoggedIn()): ?>
-                            <li><a href="/Foodwastesharingplatform/auth/profile.php" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: var(--transition);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">My Profile</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>/auth/profile.php" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: var(--transition);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">My Profile</a></li>
                         <?php else: ?>
-                            <li><a href="/Foodwastesharingplatform/auth/login.php" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: var(--transition);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">Login</a></li>
+                            <li><a href="<?php echo BASE_URL; ?>/auth/login.php" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: var(--transition);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">Login</a></li>
                         <?php endif; ?>
                     </ul>
                 </div>
@@ -50,6 +50,6 @@
             </div>
         </div>
     </footer>
-    <script src="/Foodwastesharingplatform/assets/js/main.js"></script>
+    <script src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
 </body>
 </html>

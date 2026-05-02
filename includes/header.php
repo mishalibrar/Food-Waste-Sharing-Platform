@@ -5,12 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FoodShare | Reduce Waste, Feed Community</title>
-    <link rel="stylesheet" href="/Foodwastesharingplatform/assets/css/style.css">
+    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/images/favicon.png">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <nav>
-        <a href="/Foodwastesharingplatform/index.php" class="logo">
+        <a href="<?php echo BASE_URL; ?>/index.php" class="logo">
             <i class="fas fa-leaf"></i> FoodShare
         </a>
         
@@ -19,15 +20,15 @@
         </div>
 
         <ul class="nav-links" id="navLinks">
-            <li><a href="/Foodwastesharingplatform/index.php"><i class="fas fa-search"></i> Browse</a></li>
+            <li><a href="<?php echo BASE_URL; ?>/index.php"><i class="fas fa-search"></i> Browse</a></li>
             <?php if (isLoggedIn()): ?>
                 <?php if (getRole() === 'donor'): ?>
-                    <li><a href="/Foodwastesharingplatform/listings/create.php"><i class="fas fa-plus-circle"></i> Post</a></li>
-                    <li><a href="/Foodwastesharingplatform/dashboard/donor.php"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/listings/create.php"><i class="fas fa-plus-circle"></i> Post</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/dashboard/donor.php"><i class="fas fa-chart-line"></i> Dashboard</a></li>
                 <?php elseif (getRole() === 'receiver'): ?>
-                    <li><a href="/Foodwastesharingplatform/dashboard/receiver.php"><i class="fas fa-hand-holding-heart"></i> Claims</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/dashboard/receiver.php"><i class="fas fa-hand-holding-heart"></i> Claims</a></li>
                 <?php elseif (getRole() === 'admin'): ?>
-                    <li><a href="/Foodwastesharingplatform/dashboard/admin.php"><i class="fas fa-user-shield"></i> Admin</a></li>
+                    <li><a href="<?php echo BASE_URL; ?>/dashboard/admin.php"><i class="fas fa-user-shield"></i> Admin</a></li>
                 <?php endif; ?>
                 <li class="user-dropdown" id="userDropdown" onclick="this.classList.toggle('open')">
                     <div class="user-chip">
@@ -35,13 +36,13 @@
                         <?php echo htmlspecialchars($_SESSION['name']); ?> <i class="fas fa-chevron-down" style="font-size: 0.6rem; margin-left: 0.25rem;"></i>
                     </div>
                     <div class="user-dropdown-menu">
-                        <a href="/Foodwastesharingplatform/auth/profile.php"><i class="fas fa-cog"></i> Profile Settings</a>
-                        <a href="/Foodwastesharingplatform/auth/logout.php" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <a href="<?php echo BASE_URL; ?>/auth/profile.php"><i class="fas fa-cog"></i> Profile Settings</a>
+                        <a href="<?php echo BASE_URL; ?>/auth/logout.php" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </li>
             <?php else: ?>
-                <li><a href="/Foodwastesharingplatform/auth/login.php">Login</a></li>
-                <li><a href="/Foodwastesharingplatform/auth/register.php" class="btn btn-primary" style="padding: 0.5rem 1.5rem;">Join Now</a></li>
+                <li><a href="<?php echo BASE_URL; ?>/auth/login.php">Login</a></li>
+                <li><a href="<?php echo BASE_URL; ?>/auth/register.php" class="btn btn-primary" style="padding: 0.5rem 1.5rem;">Join Now</a></li>
             <?php endif; ?>
         </ul>
     </nav>

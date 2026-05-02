@@ -39,6 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Insert claim record
         $stmt = $pdo->prepare("INSERT INTO claims (food_id, receiver_id) VALUES (?, ?)");
         $stmt->execute([$food_id, $user_id]);
+        
+        // Log activity
+        logActivity($pdo, $food_id, $user_id, 'claimed', 'Receiver claimed the item');
 
         $pdo->commit();
         echo json_encode(['success' => true]);

@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const diff = expiry - now;
 
                 if (diff <= 0) {
-                    el.closest('.card').style.display = 'none';
+                    el.closest('.card, .glass')?.style && (el.closest('.card, .glass').style.display = 'none');
                     return;
                 }
 
@@ -28,10 +28,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 el.innerText = `${hours}h ${mins}m ${secs}s`;
                 
-                // Show urgent badge if less than 2 hours
-                if (hours < 2) {
-                    const urgent = el.parentElement.querySelector('.urgent-badge');
-                    if (urgent) urgent.style.display = 'inline-block';
+                const urgentBadge = el.parentElement?.querySelector('.urgent-badge');
+                const criticalBadge = el.parentElement?.querySelector('.critical-badge');
+
+                // Critical: less than 30 minutes
+                if (hours === 0 && mins < 30) {
+                    if (urgentBadge) urgentBadge.style.display = 'none';
+                    // Create critical badge if it doesn't exist
+                    if (!criticalBadge) {
+                        const badge = document.createElement('span');
+                        badge.className = 'critical-badge';
+                        badge.innerText = '⚠ Critical';
+                        el.parentElement.insertBefore(badge, el);
+                    } else {
+                        criticalBadge.style.display = 'inline-block';
+                    }
+                }
+                // Urgent: less than 2 hours
+                else if (hours < 2) {
+                    if (urgentBadge) urgentBadge.style.display = 'inline-block';
+                    if (criticalBadge) criticalBadge.style.display = 'none';
                 }
             });
         }, 1000);

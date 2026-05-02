@@ -16,11 +16,11 @@ $stats = $pdo->prepare("SELECT
 $stats->execute([$user_id]);
 $counts = $stats->fetch();
 
-$stmt = $pdo->prepare("SELECT c.*, fp.title, fp.image_path, fp.location, fp.quantity, fp.food_type, u.name as donor_name 
+$stmt = $pdo->prepare("SELECT c.*, fp.title, fp.image_path, fp.location, fp.quantity, fp.food_type, fp.donor_id, u.name as donor_name 
                       FROM claims c 
                       JOIN food_posts fp ON c.food_id = fp.id 
                       JOIN users u ON fp.donor_id = u.id 
-                      WHERE c.receiver_id = ? AND c.status != 'cancelled'
+                      WHERE c.receiver_id = ? AND c.status != 'cancelled' AND fp.is_deleted = 0
                       ORDER BY c.claimed_at DESC");
 $stmt->execute([$user_id]);
 $claims = $stmt->fetchAll();
@@ -97,7 +97,7 @@ $claims = $stmt->fetchAll();
                     <div style="display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.5rem;">
                         <div style="display:flex; align-items:center; gap:0.6rem; font-size:0.85rem; color:var(--text-muted);">
                             <i class="fas fa-user-circle" style="color:var(--primary);"></i>
-                            <span>From: <strong><?php echo htmlspecialchars($claim['donor_name']); ?></strong></span>
+                            <span class="donor-info-badge">From: <strong><?php echo htmlspecialchars($claim['donor_name']); ?></strong> <?php echo getTrustBadge($pdo, $claim['donor_id']); ?></span>
                         </div>
                         <div style="display:flex; align-items:center; gap:0.6rem; font-size:0.85rem; color:var(--text-muted);">
                             <i class="fas fa-map-marker-alt" style="color:#ef4444;"></i>

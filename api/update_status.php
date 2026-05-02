@@ -25,8 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Update associated claims
-        $stmt = $pdo->prepare("UPDATE claims SET status = 'collected' WHERE food_id = ? AND status = 'pending'");
+        $stmt = $pdo->prepare("UPDATE claims SET status = 'collected', collected_at = NOW() WHERE food_id = ? AND status = 'pending'");
         $stmt->execute([$food_id]);
+
+        // Log activity
+        logActivity($pdo, $food_id, $user_id, 'collected', 'Donor marked as collected');
 
         $pdo->commit();
         echo json_encode(['success' => true]);

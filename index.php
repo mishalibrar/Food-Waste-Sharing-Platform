@@ -9,10 +9,10 @@ $location = $_GET['location'] ?? '';
 $food_type = $_GET['food_type'] ?? '';
 $expiring_soon = isset($_GET['expiring_soon']);
 
-$query = "SELECT fp.*, u.name as donor_name 
+$query = "SELECT fp.*, u.name as donor_name, fp.donor_id 
           FROM food_posts fp 
           JOIN users u ON fp.donor_id = u.id 
-          WHERE fp.status = 'available' AND fp.expiry_time > NOW()";
+          WHERE fp.status = 'available' AND fp.expiry_time > NOW() AND fp.is_deleted = 0";
 
 $params = [];
 if ($search) {
@@ -32,7 +32,19 @@ if ($expiring_soon) {
     $query .= " AND fp.expiry_time < DATE_ADD(NOW(), INTERVAL 4 HOUR)";
 }
 
-$query .= " ORDER BY fp.created_at DESC";
+// Location-based prioritization: exact matches first, then partial matches, then the rest
+if ($location) {
+    $query .= " ORDER BY 
+        CASE 
+            WHEN fp.location = ? THEN 0
+            WHEN fp.location LIKE ? THEN 1
+            ELSE 2 
+        END, fp.created_at DESC";
+    $params[] = $location;
+    $params[] = "%$location%";
+} else {
+    $query .= " ORDER BY fp.created_at DESC";
+}
 $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $listings = $stmt->fetchAll();
@@ -120,7 +132,7 @@ $listings = $stmt->fetchAll();
                         <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem;">
                             <span style="font-size: 0.85rem; color: var(--secondary);"><i class="fas fa-shopping-basket"></i> Qty: <?php echo htmlspecialchars($item['quantity']); ?></span>
                             <span style="font-size: 0.85rem;"><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($item['location']); ?></span>
-                            <span style="font-size: 0.85rem; color: var(--text-muted);"><i class="fas fa-user"></i> Donor: <?php echo htmlspecialchars($item['donor_name']); ?></span>
+                            <span class="donor-info-badge" style="font-size: 0.85rem; color: var(--text-muted);"><i class="fas fa-user"></i> <?php echo htmlspecialchars($item['donor_name']); ?> <?php echo getTrustBadge($pdo, $item['donor_id']); ?></span>
                         </div>
                         
                         <?php if (isLoggedIn()): ?>
@@ -141,12 +153,12 @@ $listings = $stmt->fetchAll();
 
 <?php
 // Fetch recently collected/delivered food
-$collectedStmt = $pdo->query("SELECT fp.*, u.name as donor_name, ru.name as receiver_name 
+$collectedStmt = $pdo->query("SELECT fp.*, fp.donor_id, u.name as donor_name, ru.name as receiver_name 
     FROM food_posts fp 
     JOIN users u ON fp.donor_id = u.id 
     LEFT JOIN claims c ON fp.id = c.food_id AND c.status = 'collected'
     LEFT JOIN users ru ON c.receiver_id = ru.id
-    WHERE fp.status = 'collected' 
+    WHERE fp.status = 'collected' AND fp.is_deleted = 0
     ORDER BY fp.created_at DESC LIMIT 6");
 $collected = $collectedStmt->fetchAll();
 
@@ -187,7 +199,7 @@ $platformReviews = $platformRevStmt->fetchAll();
                     <h3 class="card-title"><?php echo htmlspecialchars($item['title']); ?></h3>
                     <div style="display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.75rem; font-size: 0.85rem;">
                         <span style="color: var(--primary);"><i class="fas fa-tag"></i> <?php echo getFoodTypeLabel($item['food_type']); ?></span>
-                        <span style="color: var(--text-muted);"><i class="fas fa-user"></i> Donor: <?php echo htmlspecialchars($item['donor_name']); ?></span>
+                        <span class="donor-info-badge" style="color: var(--text-muted);"><i class="fas fa-user"></i> <?php echo htmlspecialchars($item['donor_name']); ?> <?php echo getTrustBadge($pdo, $item['donor_id']); ?></span>
                         <?php if ($item['receiver_name']): ?>
                             <span style="color: var(--secondary);"><i class="fas fa-hand-holding-heart"></i> Received by: <?php echo htmlspecialchars($item['receiver_name']); ?></span>
                         <?php endif; ?>

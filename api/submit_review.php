@@ -52,6 +52,14 @@ try {
     $log = $pdo->prepare("INSERT INTO activity_log (food_id, user_id, action, details) VALUES (?, ?, 'reviewed', ?)");
     $log->execute([$food_id, $reviewer_id, "Rated $rating/5"]);
 
+    // Recalculate and cache the reviewee's average rating
+    $avgStmt = $pdo->prepare("SELECT ROUND(AVG(rating), 2) as avg_rating FROM reviews WHERE reviewee_id = ?");
+    $avgStmt->execute([$reviewee_id]);
+    $newAvg = $avgStmt->fetch()['avg_rating'] ?? 0;
+
+    $updateAvg = $pdo->prepare("UPDATE users SET rating_avg = ? WHERE id = ?");
+    $updateAvg->execute([$newAvg, $reviewee_id]);
+
     echo json_encode(['success' => true]);
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'error' => 'Database error.']);
