@@ -32,8 +32,39 @@ $listings = $stmt->fetchAll();
     <!-- Hero Banner -->
     <div class="dash-hero">
         <div class="dash-hero-text">
-            <h1>🌱 Welcome back, <?php echo htmlspecialchars(explode(' ', $name)[0]); ?>!</h1>
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <h1>🌱 Welcome back, <?php echo htmlspecialchars(explode(' ', $name)[0]); ?>!</h1>
+                <?php 
+                    $myBadge = getTrustBadgeFromCount($counts['collected']);
+                    if ($myBadge): 
+                ?>
+                    <span style="font-size: 0.85rem;"><?php echo $myBadge; ?></span>
+                <?php endif; ?>
+            </div>
             <p>Track your donations and make a difference in the community.</p>
+            <?php
+                $collected = (int)$counts['collected'];
+                $nextTier = 3;
+                $nextLabel = 'Bronze';
+                if ($collected >= 50) { $nextTier = 0; $nextLabel = ''; }
+                elseif ($collected >= 20) { $nextTier = 50; $nextLabel = 'Platinum'; }
+                elseif ($collected >= 10) { $nextTier = 20; $nextLabel = 'Gold'; }
+                elseif ($collected >= 3) { $nextTier = 10; $nextLabel = 'Silver'; }
+                
+                if ($nextTier > 0):
+                    $prevTier = 0;
+                    if ($nextTier == 50) $prevTier = 20;
+                    elseif ($nextTier == 20) $prevTier = 10;
+                    elseif ($nextTier == 10) $prevTier = 3;
+                    $progress = min(100, (($collected - $prevTier) / ($nextTier - $prevTier)) * 100);
+            ?>
+                <div class="trust-progress" style="max-width: 320px;">
+                    <div class="trust-progress-bar">
+                        <div class="trust-progress-fill" style="width: <?php echo $progress; ?>%"></div>
+                    </div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;"><?php echo $collected; ?>/<?php echo $nextTier; ?> → <?php echo $nextLabel; ?></span>
+                </div>
+            <?php endif; ?>
         </div>
         <a href="../listings/create.php" class="btn btn-primary" style="padding:0.9rem 2rem; font-size:1rem; white-space:nowrap;">
             <i class="fas fa-plus-circle"></i> Post New Item

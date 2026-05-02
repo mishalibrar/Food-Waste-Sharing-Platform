@@ -1,6 +1,7 @@
 <?php
 // Detect environment
-$is_localhost = ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1');
+$is_cli = (php_sapi_name() === 'cli');
+$is_localhost = $is_cli || (isset($_SERVER['HTTP_HOST']) && ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1'));
 
 if ($is_localhost) {
     // Local Settings (XAMPP)

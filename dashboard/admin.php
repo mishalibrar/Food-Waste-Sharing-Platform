@@ -10,7 +10,7 @@ $active_posts  = $pdo->query("SELECT COUNT(*) FROM food_posts WHERE status = 'av
 $total_claims  = $pdo->query("SELECT COUNT(*) FROM claims WHERE status = 'collected'")->fetchColumn();
 
 $users = $pdo->query("SELECT * FROM users ORDER BY created_at DESC LIMIT 100")->fetchAll();
-$posts = $pdo->query("SELECT fp.*, u.name as donor_name FROM food_posts fp JOIN users u ON fp.donor_id = u.id WHERE fp.is_deleted = 0 ORDER BY fp.created_at DESC LIMIT 100")->fetchAll();
+$posts = $pdo->query("SELECT fp.*, fp.donor_id, u.name as donor_name FROM food_posts fp JOIN users u ON fp.donor_id = u.id WHERE fp.is_deleted = 0 ORDER BY fp.created_at DESC LIMIT 100")->fetchAll();
 
 $platform_reviews_count = $pdo->query("SELECT COUNT(*) FROM platform_reviews")->fetchColumn();
 $avg_rating = $pdo->query("SELECT ROUND(AVG(rating),1) FROM platform_reviews")->fetchColumn();
@@ -95,7 +95,10 @@ $avg_rating = $pdo->query("SELECT ROUND(AVG(rating),1) FROM platform_reviews")->
                     <div style="display:flex; align-items:center; gap:1rem;">
                         <div class="avatar-sm"><?php echo getInitial($u['name']); ?></div>
                         <div>
-                            <div style="font-weight:600; font-size:0.95rem;"><?php echo htmlspecialchars($u['name']); ?></div>
+                            <div style="font-weight:600; font-size:0.95rem;">
+                                <?php echo htmlspecialchars($u['name']); ?>
+                                <?php if ($u['role'] === 'donor') echo getTrustBadge($pdo, $u['id']); ?>
+                            </div>
                             <div style="font-size:0.78rem; color:var(--text-muted); display:flex; gap:0.75rem; align-items:center;">
                                 <span><?php echo htmlspecialchars($u['email']); ?></span>
                                 <span class="badge" style="background:rgba(255,255,255,0.08); color:var(--text-muted); font-size:0.65rem;"><?php echo strtoupper($u['role']); ?></span>
@@ -133,7 +136,7 @@ $avg_rating = $pdo->query("SELECT ROUND(AVG(rating),1) FROM platform_reviews")->
                         <?php echo htmlspecialchars($post['title']); ?>
                     </h3>
                     <div style="font-size:0.82rem; color:var(--text-muted); display:flex; flex-direction:column; gap:0.3rem; margin-bottom:1rem;">
-                        <span><i class="fas fa-user" style="color:var(--primary); width:14px;"></i> <?php echo htmlspecialchars($post['donor_name']); ?></span>
+                        <span class="donor-info-badge"><i class="fas fa-user" style="color:var(--primary); width:14px;"></i> <?php echo htmlspecialchars($post['donor_name']); ?> <?php echo getTrustBadge($pdo, $post['donor_id']); ?></span>
                         <span><i class="fas fa-calendar" style="color:var(--text-muted); width:14px;"></i> <?php echo date('M d, Y', strtotime($post['created_at'])); ?></span>
                         <span><i class="fas fa-map-marker-alt" style="color:var(--text-muted); width:14px;"></i> <?php echo htmlspecialchars($post['location'] ?: 'Not specified'); ?></span>
                     </div>

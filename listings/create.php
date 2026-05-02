@@ -34,6 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $stmt = $pdo->prepare("INSERT INTO food_posts (donor_id, title, description, food_type, quantity, expiry_time, location, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([$_SESSION['user_id'], $title, $description, $_POST['food_type'], $quantity, $expiry_time, $location, $image_path]);
+        
+        $food_id = $pdo->lastInsertId();
+        logActivity($pdo, $food_id, $_SESSION['user_id'], 'posted', 'New donation listing created');
+
         redirect('../dashboard/donor.php');
     } catch (PDOException $e) {
         $error = "Failed to create listing: " . $e->getMessage();

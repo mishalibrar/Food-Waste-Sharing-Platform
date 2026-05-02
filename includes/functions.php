@@ -63,4 +63,33 @@ function updateExpiredListings($pdo) {
     $stmt = $pdo->prepare("UPDATE food_posts SET status = 'expired' WHERE expiry_time < NOW() AND status = 'available' AND is_deleted = 0");
     $stmt->execute();
 }
+
+function getTrustBadge($pdo, $donor_id) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) as collected FROM food_posts WHERE donor_id = ? AND status = 'collected' AND is_deleted = 0");
+    $stmt->execute([$donor_id]);
+    $count = $stmt->fetch()['collected'];
+
+    if ($count >= 50) return '<span class="trust-badge trust-platinum">🏆 Platinum</span>';
+    if ($count >= 20) return '<span class="trust-badge trust-gold">🥇 Gold</span>';
+    if ($count >= 10) return '<span class="trust-badge trust-silver">🥈 Silver</span>';
+    if ($count >= 3) return '<span class="trust-badge trust-bronze">🥉 Bronze</span>';
+    return '';
+}
+
+function getTrustBadgeFromCount($count) {
+    if ($count >= 50) return '<span class="trust-badge trust-platinum">🏆 Platinum</span>';
+    if ($count >= 20) return '<span class="trust-badge trust-gold">🥇 Gold</span>';
+    if ($count >= 10) return '<span class="trust-badge trust-silver">🥈 Silver</span>';
+    if ($count >= 3) return '<span class="trust-badge trust-bronze">🥉 Bronze</span>';
+    return '';
+}
+
+function logActivity($pdo, $food_id, $user_id, $action, $details = '') {
+    try {
+        $stmt = $pdo->prepare("INSERT INTO activity_log (food_id, user_id, action, details) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$food_id, $user_id, $action, $details]);
+    } catch (PDOException $e) {
+        // Silently fail - activity logging shouldn't break main flow
+    }
+}
 ?>

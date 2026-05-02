@@ -812,6 +812,102 @@ th {
 }
 
 /* ============================================
+   TRUST BADGE STYLES
+   ============================================ */
+.trust-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: 20px;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    vertical-align: middle;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+    line-height: 1.4;
+}
+
+.trust-badge::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation: badgeShine 3s ease-in-out infinite;
+}
+
+@keyframes badgeShine {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+}
+
+.trust-bronze {
+    background: rgba(205, 127, 50, 0.15);
+    color: #cd7f32;
+    border: 1px solid rgba(205, 127, 50, 0.25);
+}
+
+.trust-silver {
+    background: rgba(192, 192, 192, 0.15);
+    color: #c0c0c0;
+    border: 1px solid rgba(192, 192, 192, 0.25);
+}
+
+.trust-gold {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.trust-platinum {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(59, 130, 246, 0.15));
+    color: #a78bfa;
+    border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+/* Trust badge inside donor cards on marketplace */
+.donor-info-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+/* Trust badge in hero/dashboard header */
+.trust-badge-hero {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.85rem;
+}
+
+/* Donor progress bar toward next badge */
+.trust-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.trust-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.trust-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transition: width 0.6s ease;
+}
+
+/* ============================================
    COMPREHENSIVE MOBILE RESPONSIVE STYLES
    ============================================ */
 
@@ -1290,5 +1386,36 @@ th {
     }
     [style*="grid-column: span 2"] {
         grid-column: span 1 !important;
+    }
+}
+
+/* ============================================
+   TRUST BADGE RESPONSIVE STYLES
+   ============================================ */
+@media (max-width: 768px) {
+    .trust-badge {
+        font-size: 0.65rem;
+        padding: 0.12rem 0.45rem;
+    }
+    .trust-badge-hero {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.65rem;
+    }
+    .donor-info-badge {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+    .trust-progress {
+        max-width: 100% !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .trust-badge {
+        font-size: 0.6rem;
+        padding: 0.1rem 0.4rem;
+    }
+    .donor-info-badge {
+        gap: 0.2rem;
     }
 }

@@ -26,7 +26,7 @@ $donorStats = $pdo->prepare("SELECT COUNT(*) as total_posts FROM food_posts WHER
 $donorStats->execute([$item['donor_user_id']]);
 $donorTotalPosts = $donorStats->fetch()['total_posts'];
 
-$donorCollected = $pdo->prepare("SELECT COUNT(*) as collected FROM food_posts WHERE donor_id = ? AND status = 'collected'");
+$donorCollected = $pdo->prepare("SELECT COUNT(*) as collected FROM food_posts WHERE donor_id = ? AND status = 'collected' AND is_deleted = 0");
 $donorCollected->execute([$item['donor_user_id']]);
 $donorCollectedCount = $donorCollected->fetch()['collected'];
 
@@ -65,11 +65,7 @@ if (isLoggedIn() && $item['status'] === 'collected') {
 }
 
 // Determine trust badge
-$trustBadge = '';
-if ($donorCollectedCount >= 50) $trustBadge = '🏆 Platinum Donor';
-elseif ($donorCollectedCount >= 20) $trustBadge = '🥇 Gold Donor';
-elseif ($donorCollectedCount >= 10) $trustBadge = '🥈 Silver Donor';
-elseif ($donorCollectedCount >= 3) $trustBadge = '🥉 Bronze Donor';
+$trustBadge = getTrustBadgeFromCount($donorCollectedCount);
 ?>
 
 <?php include '../includes/header.php'; ?>
@@ -195,7 +191,7 @@ elseif ($donorCollectedCount >= 3) $trustBadge = '🥉 Bronze Donor';
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
                         <strong style="font-size: 1.1rem;"><?php echo htmlspecialchars($item['donor_name']); ?></strong>
                         <?php if ($trustBadge): ?>
-                            <span style="font-size: 0.75rem; background: rgba(245, 158, 11, 0.15); color: var(--secondary); padding: 0.2rem 0.6rem; border-radius: 12px;"><?php echo $trustBadge; ?></span>
+                            <?php echo $trustBadge; ?>
                         <?php endif; ?>
                     </div>
                     <!-- Star Rating Display -->
