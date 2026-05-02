@@ -80,7 +80,7 @@ elseif ($donorCollectedCount >= 3) $trustBadge = '🥉 Bronze Donor';
     </a>
 
     <!-- Main Layout -->
-    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem;">
+    <div class="detail-grid" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem;">
         <!-- Left Column -->
         <div>
             <!-- Hero Image -->
